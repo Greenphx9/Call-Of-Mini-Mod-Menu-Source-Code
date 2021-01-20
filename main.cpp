@@ -22,6 +22,7 @@ bool UnlimitedAmmoRocketLauncher = false;
 bool UnlimitedAmmoMachineGun = false;
 bool UnlimitedAmmoGrenadeRifle = false;
 bool UnlimitedAmmoAssaultRifle = false;
+float GodMode = false;
 
 struct Patches{
     Patch *UnlimitedAmmoCrossbowPatch;
@@ -39,6 +40,21 @@ struct Patches{
     Patch *UnlimitedAmmoAssaultRiflePatch;
 }patch;
 
+
+// void(*old_PlayerUpdate)(void *instance);
+// void PlayerUpdate(void *instance) {
+//    if(instance != NULL) {
+//        if(!PlayerHookUpdateInitialized){
+//            PlayerHookUpdateInitialized = true;
+//            LOGI("GameManager_LateUpdate hooked");
+//        }
+//        if (GodMode) {
+//            *(float *) ((uint64_t) instance + 0x30) = 999; //hp
+//        }
+//    }
+//    old_Player(instance);
+// }
+// dont work ^^^^^^^^^^^
 
 
 
@@ -69,7 +85,7 @@ void* hack_thread(void*) {
 jobjectArray getListFT(JNIEnv *env, jclass jobj){
     jobjectArray ret;
     int i;
-    const char *features[]= {"Unlimited Ammo - Crossbow", "Unlimited Ammo - Electric Gun", "Unlimited Ammo - Laser Gun", "Unlimited Ammo - Sniper", "Unlimited Ammo - Weapon", "Unlimited Ammo - Multi Suicide Gun", "Unlimited Ammo - Suicide Gun", "Unlimited Ammo - Shot Gun", "Unlimited Ammo - Rocket Launcher", "Unlimited Ammo - Machine Gun", "Unlimited Ammo - Grenade Rifle", "Unlimited Ammo - Assault Rifle"};
+    const char *features[]= {"Unlimited Ammo"};
     int Total_Feature = (sizeof features / sizeof features[0]); //Now you dont have to manually update the number everytime
     ret= (jobjectArray)env->NewObjectArray(Total_Feature,
                                            env->FindClass("java/lang/String"),
@@ -90,87 +106,32 @@ void changeToggle(JNIEnv *env, jclass thisObj, jint number) {
             UnlimitedAmmoCrossbow = !UnlimitedAmmoCrossbow;
             if (UnlimitedAmmoCrossbow) {
                 patch.UnlimitedAmmoCrossbowPatch->Apply();
-            } else {
-                patch.UnlimitedAmmoCrossbowPatch->Reset();
-            }
-            break;
-        case 1:
-            UnlimitedAmmoElectricGun = !UnlimitedAmmoElectricGun;
-            if (UnlimitedAmmoElectricGun) {
                 patch.UnlimitedAmmoElectricGunPatch->Apply();
-            } else {
-                patch.UnlimitedAmmoElectricGunPatch->Reset();
-            }
-        case 2:
-            UnlimitedAmmoLaserGun = !UnlimitedAmmoLaserGun;
-            if (UnlimitedAmmoLaserGun) {
                 patch.UnlimitedAmmoLaserGunPatch->Apply();
-            } else {
-                patch.UnlimitedAmmoLaserGunPatch->Reset();
-            }
-        case 3:
-            UnlimitedAmmoSniper = !UnlimitedAmmoSniper;
-            if (UnlimitedAmmoSniper) {
                 patch.UnlimitedAmmoSniperPatch->Apply();
-            } else {
-                patch.UnlimitedAmmoSniperPatch->Reset();
-            }
-        case 4:
-            UnlimitedAmmoWeapon = !UnlimitedAmmoWeapon;
-            if (UnlimitedAmmoWeapon) {
                 patch.UnlimitedAmmoWeaponPatch->Apply();
-            } else {
-                patch.UnlimitedAmmoWeaponPatch->Reset();
-            }
-        case 5:
-            UnlimitedAmmoMultiSuicideGun = !UnlimitedAmmoMultiSuicideGun;
-            if (UnlimitedAmmoMultiSuicideGun) {
                 patch.UnlimitedAmmoMultiSuicideGunPatch->Apply();
-            } else {
-                patch.UnlimitedAmmoMultiSuicideGunPatch->Reset();
-            }
-        case 6:
-            UnlimitedAmmoSuicideGun = !UnlimitedAmmoSuicideGun;
-            if (UnlimitedAmmoSuicideGun) {
                 patch.UnlimitedAmmoSuicideGunPatch->Apply();
-            } else {
-                patch.UnlimitedAmmoSuicideGunPatch->Reset();
-            }
-        case 7:
-            UnlimitedAmmoShotGun = !UnlimitedAmmoShotGun;
-            if (UnlimitedAmmoShotGun) {
                 patch.UnlimitedAmmoShotGunPatch->Apply();
-            } else {
-                patch.UnlimitedAmmoShotGunPatch->Reset();
-            }
-        case 8:
-            UnlimitedAmmoRocketLauncher = !UnlimitedAmmoRocketLauncher;
-            if (UnlimitedAmmoRocketLauncher) {
                 patch.UnlimitedAmmoRocketLauncherPatch->Apply();
-            } else {
-                patch.UnlimitedAmmoRocketLauncherPatch->Reset();
-            }
-        case 9:
-            UnlimitedAmmoMachineGun = !UnlimitedAmmoMachineGun;
-            if (UnlimitedAmmoMachineGun) {
                 patch.UnlimitedAmmoMachineGunPatch->Apply();
-            } else {
-                patch.UnlimitedAmmoMachineGunPatch->Reset();
-            }
-        case 10:
-            UnlimitedAmmoGrenadeRifle = !UnlimitedAmmoGrenadeRifle;
-            if (UnlimitedAmmoGrenadeRifle) {
                 patch.UnlimitedAmmoGrenadeRiflePatch->Apply();
-            } else {
-                patch.UnlimitedAmmoGrenadeRiflePatch->Reset();
-            }
-        case 11:
-            UnlimitedAmmoAssaultRifle = !UnlimitedAmmoAssaultRifle;
-            if (UnlimitedAmmoAssaultRifle) {
                 patch.UnlimitedAmmoAssaultRiflePatch->Apply();
             } else {
+                patch.UnlimitedAmmoCrossbowPatch->Reset();
+                patch.UnlimitedAmmoElectricGunPatch->Reset();
+                patch.UnlimitedAmmoLaserGunPatch->Reset();
+                patch.UnlimitedAmmoSniperPatch->Reset();
+                patch.UnlimitedAmmoWeaponPatch->Reset();
+                patch.UnlimitedAmmoMultiSuicideGunPatch->Reset();
+                patch.UnlimitedAmmoSuicideGunPatch->Reset();
+                patch.UnlimitedAmmoShotGunPatch->Reset();
+                patch.UnlimitedAmmoRocketLauncherPatch->Reset();
+                patch.UnlimitedAmmoMachineGunPatch->Reset();
+                patch.UnlimitedAmmoGrenadeRiflePatch->Reset();
                 patch.UnlimitedAmmoAssaultRiflePatch->Reset();
             }
+            break;
         default:
             break;
     }
